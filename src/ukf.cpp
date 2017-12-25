@@ -110,7 +110,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   }
 
   // done initializing, no need to predict or update
-  long long previous_timestamp_  = meas_package.timestamp_;
+  previous_timestamp_  = meas_package.timestamp_;
   is_initialized_ = true;
   return;
   }
@@ -245,7 +245,7 @@ void UKF::Prediction(double delta_t) {
 
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
-    temp_x  = XSig_pred.col(i) - x_;
+    temp_x  = XSig_pred_.col(i) - x_;
     P_ = P_ + weights_(i) * (temp_x * temp_x.transpose());
   }
 
@@ -315,7 +315,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
-    Tc = Tc + weights(i) * x_diff * z_diff.transpose();
+    Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
   MatrixXd K = Tc * S.inverse();
   //residual
@@ -373,7 +373,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   }
 
   // Step2.1 : Mean z k+1|k
-  VectorXd z_pred = VectorXd(n_z);
+  VectorXd z_pred = VectorXd(n_z_);
   z_pred.fill(0.0);
   for (int i=0; i < 2*n_aug_+1; i++) {
       z_pred = z_pred + weights_(i) * Zsig.col(i);
@@ -417,7 +417,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     while (z_diff(1)<-3.14) z_diff(1)+=2.*3.14;
 
     // state difference
-    VectorXd x_diff = Xsig_pred_.col(i) - x;
+    VectorXd x_diff = Xsig_pred_.col(i) - x_;
     //angle normalization
     while (x_diff(3)> 3.14) x_diff(3)-=2.*3.14;
     while (x_diff(3)<-3.14) x_diff(3)+=2.*3.14;
