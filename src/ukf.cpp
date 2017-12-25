@@ -154,8 +154,8 @@ void UKF::Prediction(double delta_t) {
   x_aug = VectorXd(n_aug_); 
   
   x_aug.head(5) = x_; // Assign first 5 elmeents as x
-  x_aug(6)      = 0;
-  x_aug(7)      = 0; //Assign last 2 elements as 0 (noise mean =0)
+  x_aug(5)      = 0;
+  x_aug(6)      = 0; //Assign last 2 elements as 0 (noise mean =0)
 
   MatrixXd P_aug; //Augment process covariance matrix
   P_aug = MatrixXd (n_aug_, n_aug_);
@@ -164,7 +164,6 @@ void UKF::Prediction(double delta_t) {
   P_aug.topLeftCorner(5,5) = P_;
   P_aug(5,5) =  std_a_ * std_a_;
   P_aug(6,6) =  std_yawdd_ * std_yawdd_;
-  cout << "Prediction Step-1.1  " << endl;
 
   // Step-1 : Create sigma points
   /* Create X (cal) k |k using x k|k,  x k|k +/- scale.sqrt(P)
@@ -174,7 +173,6 @@ void UKF::Prediction(double delta_t) {
   
   MatrixXd L = P_aug.llt().matrixL(); // Sqrt matrix (7x7)
 
-  cout << "Prediction Step-1.2  " << endl;
 
   MatrixXd X_sig_aug = MatrixXd(n_aug_,n_aug_*2 +1); //7x15
   // Each column represents 1 sigma point and we have 15
@@ -183,7 +181,6 @@ void UKF::Prediction(double delta_t) {
   for (int i=0;i<n_aug_;i++) {
     X_sig_aug.col(1+i) = x_aug + sqrt(lambda_ + n_aug_)* L.col(i);
     X_sig_aug.col(n_aug_+1+i) = x_aug - sqrt(lambda_ + n_aug_)* L.col(i);
-    cout << "i = %d  " <<i<< << endl;
   }
 
   cout << "Prediction Step-1 completed " << endl;
@@ -243,8 +240,9 @@ void UKF::Prediction(double delta_t) {
   /* Calculate new mean x_ k+1|k */
   x_  << 0,0,0,0,0;
   for (int i=0; i< (2* n_aug_) +1; i++){
-    x_ = x_ * weights_(i) * Xsig_pred_.col(i); 
+    x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
+  cout << "Prediction Step-3.1  " << endl;
 
   /* Calculate new Process Covariance (P) k+1 |k */
 
@@ -253,6 +251,7 @@ void UKF::Prediction(double delta_t) {
         0,0,0,0,0,
         0,0,0,0,0,
         0,0,0,0,0;
+  cout << "Prediction Step-3.2  " << endl;
 
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
