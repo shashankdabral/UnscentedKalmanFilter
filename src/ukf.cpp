@@ -109,6 +109,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
   }
 
+  cout  << "Initializing Completed"<<endl;
   // done initializing, no need to predict or update
   previous_timestamp_  = meas_package.timestamp_;
   is_initialized_ = true;
@@ -117,12 +118,16 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
+
+  cout  << "Calling Prediction function"<<endl;
   Prediction(dt);
+  cout  << "Prediction completed"<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     UpdateRadar (meas_package);
   } else {
     UpdateLidar (meas_package);
   }
+  
 }
 
 /**
@@ -176,7 +181,7 @@ void UKF::Prediction(double delta_t) {
     X_sig_aug.col(n_aug_+1+i) = x_aug - sqrt(lambda_ + n_aug_)* L.col(i);
   }
 
-
+  cout << "Prediction Step-1 completed " << endl;
   // Step-2: Pass sigma points through process function
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
@@ -220,6 +225,7 @@ void UKF::Prediction(double delta_t) {
 
   } //for i
 
+  cout << "Prediction Step-2 completed " << endl;
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
 
