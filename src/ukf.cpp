@@ -109,14 +109,15 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
   }
 
-  cout  << "Initializing Completed"<<endl;
   // done initializing, no need to predict or update
   previous_timestamp_  = meas_package.timestamp_;
   is_initialized_ = true;
+  cout  << "Initializing Completed"<<endl;
   return;
   }
 
   float dt = 0.0f;
+  cout  << "Calculating dt"<<endl;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
 
   cout  << "Calling Prediction function"<<endl;
