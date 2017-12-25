@@ -164,6 +164,7 @@ void UKF::Prediction(double delta_t) {
   P_aug.topLeftCorner(5,5) = P_;
   P_aug(5,5) =  std_a_ * std_a_;
   P_aug(6,6) =  std_yawdd_ * std_yawdd_;
+  cout << "Prediction Step-1.1  " << endl;
 
   // Step-1 : Create sigma points
   /* Create X (cal) k |k using x k|k,  x k|k +/- scale.sqrt(P)
@@ -173,6 +174,8 @@ void UKF::Prediction(double delta_t) {
   
   MatrixXd L = P_aug.llt().matrixL(); // Sqrt matrix (7x7)
 
+  cout << "Prediction Step-1.2  " << endl;
+
   MatrixXd X_sig_aug = MatrixXd(n_aug_,n_aug_*2 +1); //7x15
   // Each column represents 1 sigma point and we have 15
 
@@ -180,6 +183,7 @@ void UKF::Prediction(double delta_t) {
   for (int i=0;i<n_aug_;i++) {
     X_sig_aug.col(1+i) = x_aug + sqrt(lambda_ + n_aug_)* L.col(i);
     X_sig_aug.col(n_aug_+1+i) = x_aug - sqrt(lambda_ + n_aug_)* L.col(i);
+    cout << "i = %d  " <<i<< << endl;
   }
 
   cout << "Prediction Step-1 completed " << endl;
