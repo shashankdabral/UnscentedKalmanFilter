@@ -155,7 +155,7 @@ void UKF::Prediction(double delta_t) {
   P_aug = MatrixXd (n_aug_, n_aug_);
 
   P_aug.fill (0.0); // Fill with zeros
-  P_aug.fill.topLeftCorner(5,5) = P_;
+  P_aug.topLeftCorner(5,5) = P_;
   P_aug(5,5) =  std_a_ * std_a_;
   P_aug(6,6) =  std_yawdd_ * std_yawdd_;
 
@@ -245,7 +245,7 @@ void UKF::Prediction(double delta_t) {
 
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
-    temp_x  = XSig_pred_.col(i) - x_;
+    temp_x  = Xsig_pred_.col(i) - x_;
     P_ = P_ + weights_(i) * (temp_x * temp_x.transpose());
   }
 
@@ -363,7 +363,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
     double v1 = cos(yaw)*v;
     double v2 = sin(yaw)*v;
-    int n_z = 3;
 
     // measurement model
     Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);                        //r
@@ -371,9 +370,10 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot 
 
   }
+  int n_z = 3;
 
   // Step2.1 : Mean z k+1|k
-  VectorXd z_pred = VectorXd(n_z_);
+  VectorXd z_pred = VectorXd(n_z);
   z_pred.fill(0.0);
   for (int i=0; i < 2*n_aug_+1; i++) {
       z_pred = z_pred + weights_(i) * Zsig.col(i);
