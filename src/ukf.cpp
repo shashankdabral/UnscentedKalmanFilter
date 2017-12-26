@@ -124,7 +124,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     cout  << "Caling Radar Update "<<endl;
-    //UpdateRadar (meas_package);
+    UpdateRadar (meas_package);
     cout  << "Radar Update completed "<<endl;
   } else {
     cout  << "Caling Lidar Update "<<endl;
