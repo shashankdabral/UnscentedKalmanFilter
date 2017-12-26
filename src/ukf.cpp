@@ -437,8 +437,12 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     }
     
     //angle normalization
-    while (z_diff(1)> 3.14) z_diff(1)-=2.*3.14;
-    while (z_diff(1)<-3.14) z_diff(1)+=2.*3.14;
+    if (z_diff(1)> 3.14) {
+      z_diff(1)-=2.*3.14;
+    }
+    if (z_diff(1)<-3.14) {
+      z_diff(1)+=2.*3.14;
+    }
 
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
