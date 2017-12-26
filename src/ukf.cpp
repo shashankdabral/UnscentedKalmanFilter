@@ -425,12 +425,16 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   MatrixXd Tc = MatrixXd(n_x_, n_z); //Cross Correlation matrix
   Tc.fill(0.0);
   cout << "n_x_ = " << n_x_ << "    n_z = " << n_z<<endl; 
-  cout << "z_pred =" << z_pred<<endl;
-  cout << "Zsig.col(0)" = << Zsig.col(0)<<endl;
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 
     //residual
     VectorXd z_diff = Zsig.col(i) - z_pred;
+    if (i==0) {
+      cout << "z_pred =" << z_pred<<endl;
+      cout << "Zsig.col(0) ="  << Zsig.col(0)<<endl;
+      cout << "Z_diff ="  << z_diff<<endl;
+      cout << "xsigpred =" <<Xsig_pred_.col(0) <<endl
+    }
     
     //angle normalization
     while (z_diff(1)> 3.14) z_diff(1)-=2.*3.14;
