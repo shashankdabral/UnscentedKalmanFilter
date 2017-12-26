@@ -244,7 +244,12 @@ void UKF::Prediction(double delta_t) {
   for (int i=0; i< (2* n_aug_) +1; i++){
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
-
+  if (x_(3) > 3.14) {
+    x_(3) = x_(3) - 2*3.14;
+  }
+  if (x_(3) < -3.14) {
+    x_(3) = x_(3) + 2*3.14;
+  }
   cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
@@ -257,6 +262,12 @@ void UKF::Prediction(double delta_t) {
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
     temp_x  = Xsig_pred_.col(i) - x_;
+    if (temp_x(3) > 3.14) {
+      temp_x(3) = temp_x(3) - 2*3.14;
+    }
+    if (temp_x(3) < -3.14) {
+      temp_x(3) = temp_x(3) + 2*3.14;
+    }
     P_ = P_ + weights_(i) * (temp_x * temp_x.transpose());
   }
 
