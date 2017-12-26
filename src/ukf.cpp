@@ -188,9 +188,6 @@ void UKF::Prediction(double delta_t) {
  
   cout << "x = " << x_ << endl;
   cout << "x_aug = " << x_aug << endl; 
-  cout << "x_sig_aug(0) = " << X_sig_aug.col(0) << endl; 
-  cout << "x_sig_aug(7) = " << X_sig_aug.col(7) << endl; 
-  cout << "x_sig_aug(14) = " << X_sig_aug.col(14) << endl; 
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
     double p_x      = X_sig_aug(0,i);
@@ -230,9 +227,6 @@ void UKF::Prediction(double delta_t) {
 
   } //for i
 
-  cout << "Xsig_pred(0)= " << Xsig_pred_.col(0) << endl; 
-  cout << "Xsig_pred(7)= " << Xsig_pred_.col(7) << endl; 
-  cout << "Xsig_pred(14)= " << Xsig_pred_.col(14) << endl; 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
 
@@ -246,13 +240,9 @@ void UKF::Prediction(double delta_t) {
   x_  << 0,0,0,0,0;
   for (int i=0; i< (2* n_aug_) +1; i++){
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
-    cout << "i = " << i << endl;
-    cout << "weights = " << weights_(i) <<endl;
-    cout << "Xsig_pred_ ="<< Xsig_pred_.col(i) <<endl;
-    cout << "x_ = " << x_<<endl;
   }
 
-  cout << "x = " << x_ << endl;
+  cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
   P_ << 0,0,0,0,0,
