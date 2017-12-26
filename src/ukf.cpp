@@ -85,8 +85,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // TODO : Complete initialization
   // set x and P
 
-  P_  << 1,0,0,0,0, 
-         0,1,0,0,0,
+  P_  << .51,0,0,0,0, 
+         0,.51,0,0,0,
 	 0,0,1,0,0,
 	 0,0,0,1,0,
 	 0,0,0,0,1;
@@ -221,10 +221,10 @@ void UKF::Prediction(double delta_t) {
       Xsig_pred_(4,i) = yawd +0 + delta_t * nu_yawdd;
     }
 
-    if (Xsig_pred_(3,i) > 3.14) {
+    while (Xsig_pred_(3,i) > 3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) - 2*3.14;
     }
-    if (Xsig_pred_(3,i) < -3.14) {
+    while (Xsig_pred_(3,i) < -3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
     }
 
@@ -244,10 +244,10 @@ void UKF::Prediction(double delta_t) {
   for (int i=0; i< (2* n_aug_) +1; i++){
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
-  if (x_(3) > 3.14) {
+  while (x_(3) > 3.14) {
     x_(3) = x_(3) - 2*3.14;
   }
-  if (x_(3) < -3.14) {
+  while (x_(3) < -3.14) {
     x_(3) = x_(3) + 2*3.14;
   }
   cout << "Predicted x = " << x_ << endl;
@@ -262,10 +262,10 @@ void UKF::Prediction(double delta_t) {
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
     temp_x  = Xsig_pred_.col(i) - x_;
-    if (temp_x(3) > 3.14) {
+    while (temp_x(3) > 3.14) {
       temp_x(3) = temp_x(3) - 2*3.14;
     }
-    if (temp_x(3) < -3.14) {
+    while (temp_x(3) < -3.14) {
       temp_x(3) = temp_x(3) + 2*3.14;
     }
     P_ = P_ + weights_(i) * (temp_x * temp_x.transpose());
@@ -453,10 +453,10 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     }
     
     //angle normalization
-    if (z_diff(1)> 3.14) {
+    while (z_diff(1)> 3.14) {
       z_diff(1)-=2.*3.14;
     }
-    if (z_diff(1)<-3.14) {
+    while (z_diff(1)<-3.14) {
       z_diff(1)+=2.*3.14;
     }
 
