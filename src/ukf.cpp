@@ -117,14 +117,18 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   }
 
   float dt = 0.0f;
-  //cout  << "Calculating dt"<<endl;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
 
   Prediction(dt);
+  cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+    cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
+    cout  << "Radar Update completed "<<endl;
   } else {
+    cout  << "Caling Lidar Update "<<endl;
     UpdateLidar (meas_package);
+    cout  << "Lidar Update completed "<<endl;
   }
   
 }
@@ -151,7 +155,6 @@ void UKF::Prediction(double delta_t) {
   VectorXd x_aug;
   x_aug = VectorXd(n_aug_); 
   
-  cout << "delta_t" << delta_t << endl;
   x_aug.head(5) = x_; // Assign first 5 elmeents as x
   x_aug(5)      = 0;
   x_aug(6)      = 0; //Assign last 2 elements as 0 (noise mean =0)
@@ -186,8 +189,7 @@ void UKF::Prediction(double delta_t) {
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
  
-  cout << "x = " << x_ << endl;
-  cout << "x_aug = " << x_aug << endl; 
+  //cout << "x = " << x_ << endl;
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
     double p_x      = X_sig_aug(0,i);
@@ -242,7 +244,7 @@ void UKF::Prediction(double delta_t) {
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
 
-  cout << "Predicted x = " << x_ << endl;
+  //cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
   P_ << 0,0,0,0,0,
