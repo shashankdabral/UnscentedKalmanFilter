@@ -117,12 +117,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   }
 
   float dt = 0.0f;
-  cout  << "Calculating dt"<<endl;
+  //cout  << "Calculating dt"<<endl;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
 
-  cout  << "Calling Prediction function"<<endl;
   Prediction(dt);
-  cout  << "Prediction completed"<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     UpdateRadar (meas_package);
   } else {
@@ -183,11 +181,13 @@ void UKF::Prediction(double delta_t) {
     X_sig_aug.col(n_aug_+1+i) = x_aug - sqrt(lambda_ + n_aug_)* L.col(i);
   }
 
-  cout << "Prediction Step-1 completed " << endl;
   // Step-2: Pass sigma points through process function
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
-  
+ 
+  cout << "x = " << x_ << endl;
+  cout << "x_aug = " << x_aug << endl; 
+  cout << "x_sig_aug = " << X_sig_aug << endl; 
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
     double p_x      = X_sig_aug(0,i);
@@ -227,7 +227,7 @@ void UKF::Prediction(double delta_t) {
 
   } //for i
 
-  cout << "Prediction Step-2 completed " << endl;
+  cout << "Xsig_pred= " << Xsig_pred_ << endl; 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
 
@@ -242,8 +242,8 @@ void UKF::Prediction(double delta_t) {
   for (int i=0; i< (2* n_aug_) +1; i++){
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
-  cout << "Prediction Step-3.1  " << endl;
 
+  cout << "x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
   P_ << 0,0,0,0,0,
@@ -251,7 +251,6 @@ void UKF::Prediction(double delta_t) {
         0,0,0,0,0,
         0,0,0,0,0,
         0,0,0,0,0;
-  cout << "Prediction Step-3.2  " << endl;
 
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
