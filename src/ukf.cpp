@@ -433,7 +433,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
       cout << "z_pred =" << z_pred<<endl;
       cout << "Zsig.col(0) ="  << Zsig.col(0)<<endl;
       cout << "Z_diff ="  << z_diff<<endl;
-      cout << "xsigpred =" <<Xsig_pred_.col(0) <<endl
+      cout << "xsigpred =" <<Xsig_pred_.col(0) <<endl;
     }
     
     //angle normalization
