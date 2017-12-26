@@ -28,10 +28,10 @@ UKF::UKF() {
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
   //std_a_ = 30;
-  std_a_ = 4.8;
+  std_a_ = 3.0;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 1.1 * 3.14;
+  std_yawdd_ = 1.1 ;
   
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -107,7 +107,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     */
     cout  << "Initializing for Laser data"<<endl;
 //    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
-    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),10,0,.5 ;
+    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),2,0.5,0.5 ;
   }
 
   // done initializing, no need to predict or update
@@ -124,7 +124,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     cout  << "Caling Radar Update "<<endl;
-    UpdateRadar (meas_package);
+    //UpdateRadar (meas_package);
     cout  << "Radar Update completed "<<endl;
   } else {
     cout  << "Caling Lidar Update "<<endl;
