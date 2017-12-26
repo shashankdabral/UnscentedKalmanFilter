@@ -437,9 +437,11 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     //angle normalization
     while (x_diff(3)> 3.14) x_diff(3)-=2.*3.14;
     while (x_diff(3)<-3.14) x_diff(3)+=2.*3.14;
-
+    
+    cout << "i = " << i <<"  ";
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
+  cout << endl;
   MatrixXd K = Tc * S.inverse();
   //residual
   VectorXd z_diff = z - z_pred;
