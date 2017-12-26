@@ -119,7 +119,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
-
+  previous_timestamp_ = meas_package.timestamp_;
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
   /*
