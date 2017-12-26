@@ -151,6 +151,7 @@ void UKF::Prediction(double delta_t) {
   VectorXd x_aug;
   x_aug = VectorXd(n_aug_); 
   
+  cout << "delta_t" << delta_t << endl;
   x_aug.head(5) = x_; // Assign first 5 elmeents as x
   x_aug(5)      = 0;
   x_aug(6)      = 0; //Assign last 2 elements as 0 (noise mean =0)
@@ -187,7 +188,9 @@ void UKF::Prediction(double delta_t) {
  
   cout << "x = " << x_ << endl;
   cout << "x_aug = " << x_aug << endl; 
-  cout << "x_sig_aug = " << X_sig_aug << endl; 
+  cout << "x_sig_aug(0) = " << X_sig_aug.col(0) << endl; 
+  cout << "x_sig_aug(7) = " << X_sig_aug.col(7) << endl; 
+  cout << "x_sig_aug(14) = " << X_sig_aug.col(14) << endl; 
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
     double p_x      = X_sig_aug(0,i);
@@ -227,7 +230,9 @@ void UKF::Prediction(double delta_t) {
 
   } //for i
 
-  cout << "Xsig_pred= " << Xsig_pred_ << endl; 
+  cout << "Xsig_pred(0)= " << Xsig_pred_.col(0) << endl; 
+  cout << "Xsig_pred(7)= " << Xsig_pred_.col(7) << endl; 
+  cout << "Xsig_pred(14)= " << Xsig_pred_.col(14) << endl; 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
 
