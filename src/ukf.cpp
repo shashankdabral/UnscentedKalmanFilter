@@ -106,7 +106,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     Initialize state with position and 0 velocity
     */
     cout  << "Initializing for Laser data"<<endl;
-    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
+//    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
+    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),10,0,.5 ;
   }
 
   // done initializing, no need to predict or update
@@ -121,6 +122,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
+  /*
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
@@ -131,6 +133,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     cout  << "Lidar Update completed "<<endl;
   }
   
+  */
 }
 
 /**
