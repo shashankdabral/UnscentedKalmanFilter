@@ -28,10 +28,10 @@ UKF::UKF() {
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
   //std_a_ = 30;
-  std_a_ = 3;
+  std_a_ = 4.8;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  std_yawdd_ = 1.1 * 3.14;
   
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -424,6 +424,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   cout << "z measured = " << z<< endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z); //Cross Correlation matrix
   Tc.fill(0.0);
+  cout << "n_x_ " << n_x_ << "n_z" << n_z<<endl; 
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 
     //residual
