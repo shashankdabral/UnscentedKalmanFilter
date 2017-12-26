@@ -122,7 +122,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   previous_timestamp_ = meas_package.timestamp_;
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
-  /*
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
     cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
@@ -133,7 +132,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     cout  << "Lidar Update completed "<<endl;
   }
   
-  */
 }
 
 /**
