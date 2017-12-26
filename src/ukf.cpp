@@ -337,6 +337,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
+    while (x_diff(3)> 3.14) x_diff(3)-=2.*3.14;
+    while (x_diff(3)<-3.14) x_diff(3)+=2.*3.14;
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
   MatrixXd K = Tc * S.inverse();
@@ -345,6 +347,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
+  while (x_(3)> 3.14) x_(3)-=2.*3.14;
+  while (x_(3)<-3.14) x_(3)+=2.*3.14;
   P_ = P_ - K*S*K.transpose();
 //  double NIS_E = z_diff.transpose * S.inverse() * z_diff; 
 
@@ -477,6 +481,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
+  while (x_(3)> 3.14) x_(3)-=2.*3.14;
+  while (x_(3)<-3.14) x_(3)+=2.*3.14;
   P_ = P_ - K*S*K.transpose();
   cout <<"x after measurement update " << x_ << endl;
 
