@@ -60,7 +60,7 @@ UKF::UKF() {
   */
   n_x_   = 5;
   n_aug_ = 7;
-  lambda_ = 3 - n_x_; 
+  lambda_ = 3 - n_aug_; 
 
   /* Weights of sigma points */
   weights_ = VectorXd(2*n_aug_ +1);
@@ -239,7 +239,7 @@ void UKF::Prediction(double delta_t) {
   /* Calculate weights */
   weights_(0) = lambda_ / (lambda_ +  n_aug_);
   for (int i=1; i< (2* n_aug_) +1; i++){
-    weights_(i)  = 1/2*(lambda_ + n_aug_);
+    weights_(i)  = 1/(2*(lambda_ + n_aug_));
   }
 
   /* Calculate new mean x_ k+1|k */
