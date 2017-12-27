@@ -241,27 +241,11 @@ void UKF::Prediction(double delta_t) {
     double yawd     = X_sig_aug(4,i);
     double nu_a     = X_sig_aug(5,i);
     double nu_yawdd = X_sig_aug(6,i);
-#if 0
-    double cos_yaw   = cos(yaw);
-    double sin_yaw   = sin(yaw);
-    double dt_cos    = delta_t * cos_yaw;
-    double dt_sin    = delta_t * sin_yaw;
-    // Check for divide by zero for yawdd and normalize yaw
-    if (fabs(yawd) <= 0.001) {
-      Xsig_pred_(0,i) = p_x + v*dt_cos + 0.5*delta_t*dt_cos*nu_a;
-      Xsig_pred_(1,i) = p_y + v*dt_sin + 0.5*delta_t*dt_sin*nu_a;
-      Xsig_pred_(2,i) = v + 0 + delta_t*nu_a;
-      Xsig_pred_(3,i) = yaw + 0 + 0.5 * delta_t*delta_t*nu_yawdd;
-      Xsig_pred_(4,i) = yawd +0 + delta_t * nu_yawdd;
+
+    if ((yaw > 3.14) || (yaw < -3.14)) {
+      cout << yaw;
+      exit(-1);
     }
-    else {
-      Xsig_pred_(0,i) = p_x + ((v/yawd)*(sin(yaw+ yawd*delta_t) - sin_yaw)) + (0.5 * delta_t*dt_cos*nu_a);  
-      Xsig_pred_(1,i) = p_y + ((v/yawd)*(-1*cos(yaw+ yawd*delta_t) +cos_yaw)) + (0.5 * delta_t*dt_sin*nu_a);
-      Xsig_pred_(2,i) = v + 0 + delta_t*nu_a;
-      Xsig_pred_(3,i) = yaw + yawd*delta_t + 0.5 * delta_t*delta_t*nu_yawdd;
-      Xsig_pred_(4,i) = yawd +0 + delta_t * nu_yawdd;
-    }
-#else
     //predicted state values
     double px_p, py_p;
 
@@ -293,7 +277,6 @@ void UKF::Prediction(double delta_t) {
     Xsig_pred_(2,i) = v_p;
     Xsig_pred_(3,i) = yaw_p;
     Xsig_pred_(4,i) = yawd_p;
-#endif
 
 
     while (Xsig_pred_(3,i) > 3.14) {
@@ -303,7 +286,7 @@ void UKF::Prediction(double delta_t) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
     }
   } //for i
-
+  cout << "Pred step -2 completed " << endl;
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
   #ifdef DEBUG_PRED_3  //Use precomputed Xsig_pred_ values 
