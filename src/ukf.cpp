@@ -242,11 +242,18 @@ void UKF::Prediction(double delta_t) {
     double nu_a     = X_sig_aug(5,i);
     double nu_yawdd = X_sig_aug(6,i);
 
-    if ((yaw > 3.14) || (yaw < -3.14)) {
-      cout << yaw;
+/*    if ((yaw > 3.14) || (yaw < -3.14)) {
+      cout << "YAW out of range"<< yaw <<endl;
       exit(-1);
     }
-    //predicted state values
+*/
+    while (yaw > 3.14) {
+      yaw = yaw - 2*3.14;
+    }
+    while (yaw < -3.14) {
+      yaw = yaw + 2*3.14;
+    }
+
     double px_p, py_p;
 
     //avoid division by zero
