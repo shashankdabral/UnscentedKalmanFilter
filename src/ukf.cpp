@@ -2,7 +2,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
-#define DEBUG_PRED_1  // Used for testing prediction
+#define DEBUG_PRED_2  // Used for testing prediction
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -125,7 +125,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
   previous_timestamp_ = meas_package.timestamp_;
-  #ifdef DEBUG_PRED_1
+  #ifdef DEBUG_PRED_2
     dt = 0.1;
   #endif
   Prediction(dt);
@@ -211,6 +211,15 @@ void UKF::Prediction(double delta_t) {
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
  
+  #ifdef DEBUG_PRED_2
+  X_sig_aug <<    5.7441,  5.85768,   5.7441,   5.7441,   5.7441,   5.7441,   5.7441,   5.7441,   5.63052,   5.7441,   5.7441,   5.7441,   5.7441,   5.7441,   5.7441,
+      1.38,  1.34566,  1.52806,     1.38,     1.38,     1.38,     1.38,     1.38,   1.41434,  1.23194,     1.38,     1.38,     1.38,     1.38,     1.38,
+    2.2049,  2.28414,  2.24557,  2.29582,   2.2049,   2.2049,   2.2049,   2.2049,   2.12566,  2.16423,  2.11398,   2.2049,   2.2049,   2.2049,   2.2049,
+    0.5015,  0.44339, 0.631886, 0.516923, 0.595227,   0.5015,   0.5015,   0.5015,   0.55961, 0.371114, 0.486077, 0.407773,   0.5015,   0.5015,   0.5015,
+    0.3528, 0.299973, 0.462123, 0.376339,  0.48417, 0.418721,   0.3528,   0.3528,  0.405627, 0.243477, 0.329261,  0.22143, 0.286879,   0.3528,   0.3528,
+         0,        0,        0,        0,        0,        0,  0.34641,        0,         0,        0,        0,        0,        0, -0.34641,        0,
+         0,        0,        0,        0,        0,        0,        0,  0.34641,         0,        0,        0,        0,        0,        0, -0.34641;
+  #endif
   //cout << "x Prior Prediction = " << x_ << endl;
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
@@ -324,6 +333,10 @@ void UKF::Prediction(double delta_t) {
 
   #ifdef DEBUG_PRED_1  
     cout <<"Debug X_sig_aug "<< X_sig_aug <<endl;
+    exit(-1);
+  #endif
+  #ifdef DEBUG_PRED_2  
+    cout <<"Debug Xsig_pred_ "<< Xsig_pred_ <<endl;
     exit(-1);
   #endif
 }
