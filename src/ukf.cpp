@@ -33,7 +33,7 @@ UKF::UKF() {
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 1.1 ;
   
-  //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
+  //dO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
 
@@ -123,16 +123,20 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
-  previous_timestamp_ = meas_package.timestamp_;
 
-  cout  << "Calling prediction with dt = "<<dt<<endl;
-  Prediction(dt);
-  cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
+    previous_timestamp_ = meas_package.timestamp_;
+    cout  << "Calling prediction with dt = "<<dt<<endl;
+    Prediction(dt);
+    cout  << "Prediction completed "<<endl;    
     cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
     cout  << "Radar Update completed "<<endl;
   } else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
+    previous_timestamp_ = meas_package.timestamp_;
+    cout  << "Calling prediction with dt = "<<dt<<endl;
+    Prediction(dt);
+    cout  << "Prediction completed "<<endl;
     cout  << "Caling Lidar Update "<<endl;
     UpdateLidar (meas_package);
     cout  << "Lidar Update completed "<<endl;
