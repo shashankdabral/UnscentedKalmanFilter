@@ -438,6 +438,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   for (int i=0; i < 2*n_aug_+1; i++) {
       z_pred = z_pred + weights_(i) * Zsig.col(i);
   }
+  while (z_pred(1)> 3.14)  z_pred(1)-= 2.*3.14;
+  while (z_pred(1)< -3.14) z_pred(1)+= 2.*3.14;
 
   // Step2.1 : Mean S k+1|k
 
