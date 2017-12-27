@@ -4,7 +4,7 @@
 
 //#define DEBUG_PRED_3  // Used for testing prediction
 //#define DEBUG_RAD_1
-#define DEBUG_RAD_2
+//#define DEBUG_RAD_2
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -626,6 +626,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   #ifdef DEBUG_RAD_2
     cout << "x_ = " << x_ <<endl;
     cout << "P_ = " << P_ <<endl;
+    exit (-1);
   #endif
 //  double NIS_E = z_diff.transpose * S.inverse() * z_diff; 
 }
