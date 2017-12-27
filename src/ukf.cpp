@@ -162,6 +162,7 @@ void UKF::Prediction(double delta_t) {
   
   VectorXd x_aug;
   x_aug = VectorXd(n_aug_); 
+  x_aug.fill(0.0);
   
   x_aug.head(5) = x_; // Assign first 5 elmeents as x
   x_aug(5)      = 0;
@@ -253,7 +254,8 @@ void UKF::Prediction(double delta_t) {
 
     while (Xsig_pred_(3,i) > 3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) - 2*3.14;
-      cout <<"while Xsig_pred_(3,i)" << Xsig_pred_(3,i)<<endl;
+      cout <<"while Xsig_pred_(3,i)" << Xsig_pred_(3,i) <<"yawd = "<<yawd<<endl;
+
     }
     while (Xsig_pred_(3,i) < -3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
