@@ -33,7 +33,6 @@ public:
 
   ///* time when the state is true, in us
   long long time_us_;
-  long long previous_timestamp_;
 
   ///* Process noise standard deviation longitudinal acceleration in m/s^2
   double std_a_;
@@ -60,14 +59,22 @@ public:
   VectorXd weights_;
 
   ///* State dimension
-  int n_x_;
+  int n_x;
 
   ///* Augmented state dimension
-  int n_aug_;
+  int n_aug;
 
   ///* Sigma point spreading parameter
-  double lambda_;
+  double lambda;
 
+  //set measurement dimension, radar can measure r, phi, and r_dot
+  int n_z;
+
+  // measurement matrix
+  MatrixXd H_;
+
+  // measurement covariance matrix
+  MatrixXd R_;
 
   /**
    * Constructor
@@ -97,6 +104,8 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateLidar(MeasurementPackage meas_package);
+
+  void UpdateLidarEKF(MeasurementPackage meas_package);
 
   /**
    * Updates the state and the state covariance matrix using a radar measurement
