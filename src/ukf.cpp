@@ -132,6 +132,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   #ifdef DEBUG_PRED_2
     dt = 0.1;
   #endif
+  cout  << "Calling prediction with dt = "<<dt<<endl;
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
