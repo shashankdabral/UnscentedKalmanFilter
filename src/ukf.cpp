@@ -2,6 +2,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
+#define DEBUG_PRED_1  // Used for testing prediction
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -66,6 +67,10 @@ UKF::UKF() {
   weights_ = VectorXd(2*n_aug_ +1);
   Xsig_pred_ = MatrixXd(n_x_,2*n_aug_+1);
   is_initialized_ = false;
+  #ifdef DEBUG_PRED_1
+    std_a_ = 0.2;
+    std_yawdd_ = 0.2 ;
+  #endif
 }
 
 UKF::~UKF() {}
@@ -120,6 +125,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
   previous_timestamp_ = meas_package.timestamp_;
+  #ifdef DEBUG_PRED_1
+    dt = 0.1;
+  #endif
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
@@ -153,6 +161,19 @@ void UKF::Prediction(double delta_t) {
   //        : This gives x K+1|k and P k+1|k
 
   
+  #ifdef DEBUG_PRED_1
+    x_ <<   5.7441,
+         1.3800,
+         2.2049,
+         0.5015,
+         0.3528;
+    P_ <<  0.0043,   -0.0013,    0.0030,   -0.0022,   -0.0020,
+          -0.0013,    0.0077,    0.0011,    0.0071,    0.0060,
+           0.0030,    0.0011,    0.0054,    0.0007,    0.0008,
+          -0.0022,    0.0071,    0.0007,    0.0098,    0.0100,
+          -0.0020,    0.0060,    0.0008,    0.0100,    0.0123;
+
+  #endif
   VectorXd x_aug;
   x_aug = VectorXd(n_aug_); 
   
@@ -301,7 +322,10 @@ void UKF::Prediction(double delta_t) {
     P_ = P_ + weights_(i) * temp_x * temp_x.transpose();
   }
 
-   
+  #ifdef DEBUG_PRED_1  
+    cout <<"Debug X_sig_aug "<< X_sig_aug <<endl;
+    exit(-1);
+  #endif
 }
 
 /**
