@@ -3,6 +3,7 @@
 #include <iostream>
 
 //#define DEBUG_PRED_3  // Used for testing prediction
+#define DEBUG_RAD_1
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -70,6 +71,11 @@ UKF::UKF() {
   #ifdef DEBUG_PRED_1
     std_a_ = 0.2;
     std_yawdd_ = 0.2 ;
+  #endif
+  #ifdef DEBUG_RAD_1
+    std_radr_ = 0.3;
+    std_radphi_ = 0.0175;
+    std_radrd_ = 0.1;
   #endif
 }
 
@@ -307,6 +313,15 @@ void UKF::Prediction(double delta_t) {
           0.352, 0.29997, 0.46212, 0.37633,  0.4841, 0.41872,   0.352, 0.38744, 0.40562, 0.24347, 0.32926,  0.2214, 0.28687,   0.352, 0.318159;
   #endif
 
+  #ifdef DEBUG_RAD_1  //Use precomputed Xsig_pred_ values 
+  Xsig_pred_ << 5.9374,  6.0640,   5.925,  5.9436,  5.9266,  5.9374,  5.9389,  5.9374,  5.8106,  5.9457,  5.9310,  5.9465,  5.9374,  5.9359,  5.93744,
+           1.48,  1.4436,   1.660,  1.4934,  1.5036,    1.48,  1.4868,    1.48,  1.5271,  1.3104,  1.4787,  1.4674,    1.48,  1.4851,    1.486,
+          2.204,  2.2841,  2.2455,  2.2958,   2.204,   2.204,  2.2395,   2.204,  2.1256,  2.1642,  2.1139,   2.204,   2.204,  2.1702,   2.2049,
+         0.5367, 0.47338, 0.67809, 0.55455, 0.64364, 0.54337,  0.5367, 0.53851, 0.60017, 0.39546, 0.51900, 0.42991, 0.530188,  0.5367, 0.535048,
+          0.352, 0.29997, 0.46212, 0.37633,  0.4841, 0.41872,   0.352, 0.38744, 0.40562, 0.24347, 0.32926,  0.2214, 0.28687,   0.352, 0.318159;
+  #endif
+
+
   /* Calculate weights */
   weights_(0) = lambda_ / (lambda_ +  n_aug_);
   for (int i=1; i< (2* n_aug_) +1; i++){
@@ -518,6 +533,11 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   //cout << "Radar Step -2 Completed " << endl;
 
+  #ifdef DEBUG_RAD_1
+    cout <<"z_pred = " <<z_pred <<endl;
+    cout <<" S = " <<S <<endl;
+    exit (-1);
+  #endif
   // Step3: Kalman filter eqs
   VectorXd z = VectorXd(n_z);
   z(0)       =  meas_package.raw_measurements_(0);
@@ -568,7 +588,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   while (x_(3)> 3.14) x_(3)-=2.*3.14;
   while (x_(3)<-3.14) x_(3)+=2.*3.14;
   P_ = P_ - K*S*K.transpose();
-  //cout <<"x after measurement update " << x_ << endl;
 
 //  double NIS_E = z_diff.transpose * S.inverse() * z_diff; 
 }
