@@ -2,7 +2,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
-#define DEBUG_PRED_3  // Used for testing prediction
+//#define DEBUG_PRED_3  // Used for testing prediction
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -14,7 +14,7 @@ using std::vector;
  */
 UKF::UKF() {
   // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = true;
+  use_laser_ = false;
 
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
@@ -96,7 +96,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	 0,0,0,1,0,
 	 0,0,0,0,1;
 
-  if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
     /**
     Convert radar from polar to cartesian coordinates and initialize state.
     x = rho.cos(phi), y = rho.sin(phi)
@@ -105,39 +105,48 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     float theta = meas_package.raw_measurements_(1);
     float ro    = meas_package.raw_measurements_(0); 
     x_  <<  ro*cos(theta),ro*sin(theta),0,0,0;
+    previous_timestamp_  = meas_package.timestamp_;
+    is_initialized_ = true;
   }
-  else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+  else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
     /**
     Initialize state with position and 0 velocity
     */
     cout  << "Initializing for Laser data"<<endl;
-//    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
     x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0.0,0.0 ;
+    previous_timestamp_  = meas_package.timestamp_;
+    is_initialized_ = true;
+  }
+  else { // No sensor
+    previous_timestamp_  = meas_package.timestamp_;
+    is_initialized_ = true;
   }
 
   // done initializing, no need to predict or update
-  previous_timestamp_  = meas_package.timestamp_;
-  is_initialized_ = true;
   cout  << "Initializing Completed"<<endl;
   return;
   }
 
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
-  previous_timestamp_ = meas_package.timestamp_;
   #ifdef DEBUG_PRED_2
     dt = 0.1;
   #endif
   Prediction(dt);
   cout  << "Prediction completed "<<endl;
-  if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
     cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
+    previous_timestamp_ = meas_package.timestamp_;
     cout  << "Radar Update completed "<<endl;
-  } else {
+  } else if (meas_package.sensor_type_ == MeasurementPackage::LIDAR && use_lidar_) {
     cout  << "Caling Lidar Update "<<endl;
     UpdateLidar (meas_package);
+    previous_timestamp_ = meas_package.timestamp_;
     cout  << "Lidar Update completed "<<endl;
+  }
+  else { //No sensor
+    previous_timestamp_ = meas_package.timestamp_;
   }
   
 }
