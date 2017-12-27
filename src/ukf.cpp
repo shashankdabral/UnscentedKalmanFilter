@@ -139,7 +139,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     UpdateRadar (meas_package);
     previous_timestamp_ = meas_package.timestamp_;
     cout  << "Radar Update completed "<<endl;
-  } else if (meas_package.sensor_type_ == MeasurementPackage::LIDAR && use_lidar_) {
+  } else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
     cout  << "Caling Lidar Update "<<endl;
     UpdateLidar (meas_package);
     previous_timestamp_ = meas_package.timestamp_;
