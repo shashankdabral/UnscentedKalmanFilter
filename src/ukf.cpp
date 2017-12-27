@@ -28,10 +28,10 @@ UKF::UKF() {
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
   //std_a_ = 30;
-  std_a_ = 3.0;
+  std_a_ = 1.0;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 1.1 ;
+  std_yawdd_ = 1.0 ;
   
   //dO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
@@ -86,8 +86,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // TODO : Complete initialization
   // set x and P
 
-  P_  << .51,0,0,0,0, 
+/*  P_  << .51,0,0,0,0, 
          0,.51,0,0,0,
+	 0,0,1,0,0,
+	 0,0,0,1,0,
+	 0,0,0,0,1;
+*/
+  P_  << 1,0,0,0,0, 
+         0,1,0,0,0,
 	 0,0,1,0,0,
 	 0,0,0,1,0,
 	 0,0,0,0,1;
@@ -366,8 +372,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   // Step3: Kalman filter eqs
   VectorXd z = VectorXd(n_z);
-  z(0)       =  meas_package.raw_measurements_(0);
-  z(1)       =  meas_package.raw_measurements_(1);
+  z       =  meas_package.raw_measurements_;
   MatrixXd Tc = MatrixXd(n_x_, n_z); //Cross Correlation matrix
   Tc.fill(0.0);
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
@@ -489,9 +494,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   // Step3: Kalman filter eqs
   VectorXd z = VectorXd(n_z);
-  z(0)       =  meas_package.raw_measurements_(0);
-  z(1)       =  meas_package.raw_measurements_(1);
-  z(2)       =  meas_package.raw_measurements_(2);
+  z       =  meas_package.raw_measurements_;
 
   //cout << "z measured = " << z<< endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z); //Cross Correlation matrix
