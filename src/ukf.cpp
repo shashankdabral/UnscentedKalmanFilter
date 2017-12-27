@@ -86,8 +86,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // TODO : Complete initialization
   // set x and P
 
-  P_  << 1,0,0,0,0, 
-         0,1,0,0,0,
+  P_  << .51,0,0,0,0, 
+         0,.51,0,0,0,
 	 0,0,1,0,0,
 	 0,0,0,1,0,
 	 0,0,0,0,1;
@@ -429,11 +429,18 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     double v2 = sin(yaw)*v;
 
     // measurement model
-    Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);                        //r
-    Zsig(1,i) = atan2(p_y,p_x);                                 //phi
-    while (Zsig(1,i)> 3.14) Zsig(1,i)-= 2.*3.14;
-    while (Zsig(1,i)< -3.14) Zsig(1,i)+= 2.*3.14;
-    Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot 
+    if (fabs(p_x*p_x + p_y*_p_y) > 0.001) { 
+      Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);                        //r
+      Zsig(1,i) = atan2(p_y,p_x);                                 //phi
+      while (Zsig(1,i)> 3.14) Zsig(1,i)-= 2.*3.14;
+      while (Zsig(1,i)< -3.14) Zsig(1,i)+= 2.*3.14;
+      Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot 
+    } else {
+      Zsig(0,i) = 0.0;
+      Zsig(1,i) = 0.0;
+      Zsig(2,i) = 0.0;
+      cout << "Avoided divide by zero" <<endl;
+    }
 
   }
   int n_z = 3;
