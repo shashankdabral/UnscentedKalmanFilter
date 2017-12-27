@@ -2,7 +2,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
-#define DEBUG_PRED_2  // Used for testing prediction
+//#define DEBUG_PRED_3  // Used for testing prediction
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -295,6 +295,13 @@ void UKF::Prediction(double delta_t) {
 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
+  #ifdef DEBUG_PRED_3  //Use precomputed Xsig_pred_ values 
+  Xsig_pred_ << 5.9374,  6.0640,   5.925,  5.9436,  5.9266,  5.9374,  5.9389,  5.9374,  5.8106,  5.9457,  5.9310,  5.9465,  5.9374,  5.9359,  5.93744,
+           1.48,  1.4436,   1.660,  1.4934,  1.5036,    1.48,  1.4868,    1.48,  1.5271,  1.3104,  1.4787,  1.4674,    1.48,  1.4851,    1.486,
+          2.204,  2.2841,  2.2455,  2.2958,   2.204,   2.204,  2.2395,   2.204,  2.1256,  2.1642,  2.1139,   2.204,   2.204,  2.1702,   2.2049,
+         0.5367, 0.47338, 0.67809, 0.55455, 0.64364, 0.54337,  0.5367, 0.53851, 0.60017, 0.39546, 0.51900, 0.42991, 0.530188,  0.5367, 0.535048,
+          0.352, 0.29997, 0.46212, 0.37633,  0.4841, 0.41872,   0.352, 0.38744, 0.40562, 0.24347, 0.32926,  0.2214, 0.28687,   0.352, 0.318159;
+  #endif
 
   /* Calculate weights */
   weights_(0) = lambda_ / (lambda_ +  n_aug_);
@@ -318,7 +325,7 @@ void UKF::Prediction(double delta_t) {
 
 
 
-  P_.fill(0.0);
+ // P_.fill(0.0);
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
     temp_x  = Xsig_pred_.col(i) - x_;
@@ -336,6 +343,10 @@ void UKF::Prediction(double delta_t) {
     exit(-1);
   #endif
   #ifdef DEBUG_PRED_2  
+    cout <<"Debug Xsig_pred_ "<< Xsig_pred_ <<endl;
+    exit(-1);
+  #endif
+  #ifdef DEBUG_PRED_3  
     cout <<"Debug Xsig_pred_ "<< Xsig_pred_ <<endl;
     exit(-1);
   #endif
