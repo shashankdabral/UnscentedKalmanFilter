@@ -96,7 +96,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	 0,0,0,1,0,
 	 0,0,0,0,1;
 
-  if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR ) {
     /**
     Convert radar from polar to cartesian coordinates and initialize state.
     x = rho.cos(phi), y = rho.sin(phi)
@@ -108,7 +108,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     previous_timestamp_  = meas_package.timestamp_;
     is_initialized_ = true;
   }
-  else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
+  else if (meas_package.sensor_type_ == MeasurementPackage::LASER ) {
     /**
     Initialize state with position and 0 velocity
     */
@@ -117,10 +117,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     previous_timestamp_  = meas_package.timestamp_;
     is_initialized_ = true;
   }
-  else { // No sensor
-    previous_timestamp_  = meas_package.timestamp_;
-    is_initialized_ = true;
-  }
+
 
   // done initializing, no need to predict or update
   cout  << "Initializing Completed"<<endl;
