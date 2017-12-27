@@ -92,6 +92,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	 0,0,0,1,0,
 	 0,0,0,0,1;
 
+  Xsig_pred_.fill(0.0);
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR ) {
     /**
     Convert radar from polar to cartesian coordinates and initialize state.
@@ -185,7 +186,7 @@ void UKF::Prediction(double delta_t) {
 
   MatrixXd X_sig_aug = MatrixXd(n_aug_,n_aug_*2 +1); //7x15
   // Each column represents 1 sigma point and we have 15
-
+  X_sig_aug.fill(0.0);
   X_sig_aug.col(0) = x_aug;
   for (int i=0;i<n_aug_;i++) {
     X_sig_aug.col(1+i) = x_aug + sqrt(lambda_ + n_aug_)* L.col(i);
@@ -196,7 +197,7 @@ void UKF::Prediction(double delta_t) {
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
  
-
+  
   //cout << "x Prior Prediction = " << x_ << endl;
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
@@ -320,6 +321,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   
   // Step-1
   MatrixXd Zsig = MatrixXd (2, (2*n_aug_) +1); // Lidar meas is 2 x15
+  Zsig.fill(0.0);
   for (int i=0; i< (2* n_aug_) +1; i++){
     double p_x = Xsig_pred_(0,i);
     double p_y = Xsig_pred_(1,i);
@@ -351,6 +353,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   //add measurement noise covariance matrix
   MatrixXd R = MatrixXd(n_z,n_z);
+  R.fill(0.0);
   R <<    std_laspx_*std_laspx_, 0, 
           0, std_laspy_*std_laspy_;
   S = S + R;
@@ -373,6 +376,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
   MatrixXd K = Tc * S.inverse();
+  
   //residual
   VectorXd z_diff = z - z_pred;
 
@@ -412,6 +416,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   // Step-1
   MatrixXd Zsig = MatrixXd (3, (2*n_aug_) +1); // Radar meas is 3 x15
+  Zsig.fill(0.0);
   for (int i=0; i< (2* n_aug_) +1; i++){
     double p_x = Xsig_pred_(0,i);
     double p_y = Xsig_pred_(1,i);
@@ -459,6 +464,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   //add measurement noise covariance matrix
   MatrixXd R = MatrixXd(n_z,n_z);
+  R.fill(0.0);
   R <<    std_radr_*std_radr_, 0, 0,
           0, std_radphi_*std_radphi_, 0,
           0, 0,std_radrd_*std_radrd_;
