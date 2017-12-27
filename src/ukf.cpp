@@ -2,7 +2,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
-//#define DEBUG_PRED_3  // Used for testing prediction
+#define DEBUG_PRED_3  // Used for testing prediction
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -325,7 +325,7 @@ void UKF::Prediction(double delta_t) {
 
 
 
- // P_.fill(0.0);
+  P_.fill(0.0);
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
     temp_x  = Xsig_pred_.col(i) - x_;
@@ -347,7 +347,8 @@ void UKF::Prediction(double delta_t) {
     exit(-1);
   #endif
   #ifdef DEBUG_PRED_3  
-    cout <<"Debug Xsig_pred_ "<< Xsig_pred_ <<endl;
+    cout <<"x_ "<< x_ <<endl;
+    cout <<"P_ "<< P_ <<endl;
     exit(-1);
   #endif
 }
