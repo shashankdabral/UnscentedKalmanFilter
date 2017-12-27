@@ -86,8 +86,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   // TODO : Complete initialization
   // set x and P
 
-  P_  << .51,0,0,0,0, 
-         0,.51,0,0,0,
+  P_  << 1,0,0,0,0, 
+         0,1,0,0,0,
 	 0,0,1,0,0,
 	 0,0,0,1,0,
 	 0,0,0,0,1;
@@ -208,16 +208,14 @@ void UKF::Prediction(double delta_t) {
     double nu_a     = X_sig_aug(5,i);
     double nu_yawdd = X_sig_aug(6,i);
 
-/*    if ((yaw > 3.14) || (yaw < -3.14)) {
-      cout << "YAW out of range"<< yaw <<endl;
-      exit(-1);
-    }
-*/
+
     while (yaw > 3.14) {
       yaw = yaw - 2*3.14;
+      cout <<" Inside while yaw= " <<yaw<<endl;
     }
     while (yaw < -3.14) {
       yaw = yaw + 2*3.14;
+      cout <<" Inside while yaw " <<yaw<<endl;
     }
 
     double px_p, py_p;
@@ -254,9 +252,11 @@ void UKF::Prediction(double delta_t) {
 
     while (Xsig_pred_(3,i) > 3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) - 2*3.14;
+      cout <<"while Xsig_pred_(3,i)" << Xsig_pred_(3,i)<<endl;
     }
     while (Xsig_pred_(3,i) < -3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
+      cout <<"while Xsig_pred_(3,i)" << Xsig_pred_(3,i)<<endl;
     }
   } //for i
   cout << "Pred step -2 completed " << endl;
@@ -276,9 +276,11 @@ void UKF::Prediction(double delta_t) {
   }
   while (x_(3) > 3.14) {
     x_(3) = x_(3) - 2*3.14;
+    cout <<"while x_(3)" << x_(3)<<endl;
   }
   while (x_(3) < -3.14) {
     x_(3) = x_(3) + 2*3.14;
+    cout <<"while x_(3)" << x_(3)<<endl;
   }
   //cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
@@ -291,9 +293,11 @@ void UKF::Prediction(double delta_t) {
     temp_x  = Xsig_pred_.col(i) - x_;
     while (temp_x(3) > 3.14) {
       temp_x(3) = temp_x(3) - 2*3.14;
+      cout <<"while temp_x_(3)" << temp_x(3)<<endl;
     }
     while (temp_x(3) < -3.14) {
       temp_x(3) = temp_x(3) + 2*3.14;
+      cout <<"while temp_x_(3)" << temp_x(3)<<endl;
     }
     P_ = P_ + weights_(i) * temp_x * temp_x.transpose();
   }
