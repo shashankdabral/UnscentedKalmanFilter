@@ -200,7 +200,7 @@ void UKF::Prediction(double delta_t) {
     double yawd     = X_sig_aug(4,i);
     double nu_a     = X_sig_aug(5,i);
     double nu_yawdd = X_sig_aug(6,i);
-
+#if 0
     double cos_yaw   = cos(yaw);
     double sin_yaw   = sin(yaw);
     double dt_cos    = delta_t * cos_yaw;
@@ -220,6 +220,40 @@ void UKF::Prediction(double delta_t) {
       Xsig_pred_(3,i) = yaw + yawd*delta_t + 0.5 * delta_t*delta_t*nu_yawdd;
       Xsig_pred_(4,i) = yawd +0 + delta_t * nu_yawdd;
     }
+#else
+    //predicted state values
+    double px_p, py_p;
+
+    //avoid division by zero
+    if (fabs(yawd) > 0.001) {
+        px_p = p_x + v/yawd * ( sin (yaw + yawd*delta_t) - sin(yaw));
+        py_p = p_y + v/yawd * ( cos(yaw) - cos(yaw+yawd*delta_t) );
+    }
+    else {
+        px_p = p_x + v*delta_t*cos(yaw);
+        py_p = p_y + v*delta_t*sin(yaw);
+    }
+
+    double v_p = v;
+    double yaw_p = yaw + yawd*delta_t;
+    double yawd_p = yawd;
+
+    //add noise
+    px_p = px_p + 0.5*nu_a*delta_t*delta_t * cos(yaw);
+    py_p = py_p + 0.5*nu_a*delta_t*delta_t * sin(yaw);
+    v_p = v_p + nu_a*delta_t;
+
+    yaw_p = yaw_p + 0.5*nu_yawdd*delta_t*delta_t;
+    yawd_p = yawd_p + nu_yawdd*delta_t;
+
+    //write predicted sigma point into right column
+    Xsig_pred(0,i) = px_p;
+    Xsig_pred(1,i) = py_p;
+    Xsig_pred(2,i) = v_p;
+    Xsig_pred(3,i) = yaw_p;
+    Xsig_pred(4,i) = yawd_p;
+#endif
+
 
     while (Xsig_pred_(3,i) > 3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) - 2*3.14;
@@ -228,7 +262,6 @@ void UKF::Prediction(double delta_t) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
     }
   } //for i
-  cout <<"Xisg_pred =  " << Xsig_pred_;
 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
@@ -238,7 +271,6 @@ void UKF::Prediction(double delta_t) {
   for (int i=1; i< (2* n_aug_) +1; i++){
     weights_(i)  = 1/(2*(lambda_ + n_aug_));
   }
-  cout <<"weights =  " << weights_(i);
 
   /* Calculate new mean x_ k+1|k */
   x_  << 0.0,0.0,0.0,0.0,0.0;
