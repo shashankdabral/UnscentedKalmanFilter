@@ -60,7 +60,7 @@ UKF::UKF() {
   */
   n_x_   = 5;
   n_aug_ = 7;
-  lambda_ = 20 - n_aug_; 
+  lambda_ = 5 - n_aug_; 
 
   /* Weights of sigma points */
   weights_ = VectorXd(2*n_aug_ +1);
@@ -107,7 +107,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     */
     cout  << "Initializing for Laser data"<<endl;
 //    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),0,0,0 ;
-    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),5,0.5,0.5 ;
+    x_ << meas_package.raw_measurements_(0),meas_package.raw_measurements_(1),5,0.0,0.5 ;
   }
 
   // done initializing, no need to predict or update
