@@ -60,7 +60,7 @@ UKF::UKF() {
   */
   n_x_   = 5;
   n_aug_ = 7;
-  lambda_ = 5 - n_aug_; 
+  lambda_ = 3 - n_aug_; 
 
   /* Weights of sigma points */
   weights_ = VectorXd(2*n_aug_ +1);
@@ -227,8 +227,8 @@ void UKF::Prediction(double delta_t) {
     while (Xsig_pred_(3,i) < -3.14) {
       Xsig_pred_(3,i) = Xsig_pred_(3,i) + 2*3.14;
     }
-
   } //for i
+  cout <<"Xisg_pred =  " << Xsig_pred_;
 
 
   // Step-3: Calculate mean and covariance to get x k+1|k and P k+1|k
@@ -238,9 +238,10 @@ void UKF::Prediction(double delta_t) {
   for (int i=1; i< (2* n_aug_) +1; i++){
     weights_(i)  = 1/(2*(lambda_ + n_aug_));
   }
+  cout <<"weights =  " << weights_(i);
 
   /* Calculate new mean x_ k+1|k */
-  x_  << 0,0,0,0,0;
+  x_  << 0.0,0.0,0.0,0.0,0.0;
   for (int i=0; i< (2* n_aug_) +1; i++){
     x_ = x_ + (weights_(i) * Xsig_pred_.col(i)); 
   }
@@ -253,12 +254,9 @@ void UKF::Prediction(double delta_t) {
   cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
-  P_ << 0,0,0,0,0,
-        0,0,0,0,0,
-        0,0,0,0,0,
-        0,0,0,0,0,
-        0,0,0,0,0;
 
+
+  P_.fill(0.0);
   VectorXd temp_x = VectorXd(n_x_);
   for (int i=0; i< (2* n_aug_) +1; i++){
     temp_x  = Xsig_pred_.col(i) - x_;
@@ -268,7 +266,7 @@ void UKF::Prediction(double delta_t) {
     while (temp_x(3) < -3.14) {
       temp_x(3) = temp_x(3) + 2*3.14;
     }
-    P_ = P_ + weights_(i) * (temp_x * temp_x.transpose());
+    P_ = P_ + weights_(i) * temp_x * temp_x.transpose();
   }
 
    
