@@ -190,7 +190,7 @@ void UKF::Prediction(double delta_t) {
   // Create X(cal) k+1 |k
   // Stored as Xsig_pred_ 5x15
  
-  cout << "x Prior Prediction = " << x_ << endl;
+  //cout << "x Prior Prediction = " << x_ << endl;
   /* Loop through each sigma point */ 
   for (int i=0;i<2*n_aug_+1;i++) {
     double p_x      = X_sig_aug(0,i);
@@ -283,7 +283,7 @@ void UKF::Prediction(double delta_t) {
   while (x_(3) < -3.14) {
     x_(3) = x_(3) + 2*3.14;
   }
-  cout << "Predicted x = " << x_ << endl;
+  //cout << "Predicted x = " << x_ << endl;
   /* Calculate new Process Covariance (P) k+1 |k */
 
 
@@ -428,7 +428,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   }
   int n_z = 3;
 
-  cout << "Radar Step -1 Completed " << endl;
+  //cout << "Radar Step -1 Completed " << endl;
 
   // Step2.1 : Mean z k+1|k
   VectorXd z_pred = VectorXd(n_z);
@@ -459,7 +459,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
           0, 0,std_radrd_*std_radrd_;
   S = S + R;
 
-  cout << "Radar Step -2 Completed " << endl;
+  //cout << "Radar Step -2 Completed " << endl;
 
   // Step3: Kalman filter eqs
   VectorXd z = VectorXd(n_z);
@@ -467,20 +467,21 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   z(1)       =  meas_package.raw_measurements_(1);
   z(2)       =  meas_package.raw_measurements_(2);
 
-  cout << "z measured = " << z<< endl;
+  //cout << "z measured = " << z<< endl;
   MatrixXd Tc = MatrixXd(n_x_, n_z); //Cross Correlation matrix
   Tc.fill(0.0);
-  cout << "n_x_ = " << n_x_ << "    n_z = " << n_z<<endl; 
   for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 
     //residual
     VectorXd z_diff = Zsig.col(i) - z_pred;
+    /*
     if (i==0) {
       cout << "z_pred =" << z_pred<<endl;
       cout << "Zsig.col(0) ="  << Zsig.col(0)<<endl;
       cout << "Z_diff ="  << z_diff<<endl;
       cout << "xsigpred =" <<Xsig_pred_.col(0) <<endl;
     }
+    */
     
     //angle normalization
     while (z_diff(1)> 3.14) {
@@ -496,25 +497,21 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     while (x_diff(3)> 3.14) x_diff(3)-=2.*3.14;
     while (x_diff(3)<-3.14) x_diff(3)+=2.*3.14;
     
-    cout << "i = " << i <<"  ";
     Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
   }
-  cout << endl;
   MatrixXd K = Tc * S.inverse();
   //residual
   VectorXd z_diff = z - z_pred;
-  cout << "z diff = " << z_diff <<endl;
   //angle normalization
   while (z_diff(1)> 3.14) z_diff(1)-=2.*3.14;
   while (z_diff(1)<-3.14) z_diff(1)+=2.*3.14;
-  cout << "z diff after norm = " << z_diff <<endl;
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   while (x_(3)> 3.14) x_(3)-=2.*3.14;
   while (x_(3)<-3.14) x_(3)+=2.*3.14;
   P_ = P_ - K*S*K.transpose();
-  cout <<"x after measurement update " << x_ << endl;
+  //cout <<"x after measurement update " << x_ << endl;
 
 //  double NIS_E = z_diff.transpose * S.inverse() * z_diff; 
 }
