@@ -14,7 +14,7 @@ using std::vector;
  */
 UKF::UKF() {
   // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = false;
+  use_laser_ = true ;
 
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
@@ -126,6 +126,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
+  previous_timestamp_ = meas_package.timestamp_;
   #ifdef DEBUG_PRED_2
     dt = 0.1;
   #endif
@@ -135,17 +136,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
     cout  << "Caling Radar Update "<<endl;
     UpdateRadar (meas_package);
-    previous_timestamp_ = meas_package.timestamp_;
     cout  << "Radar Update completed "<<endl;
   } else if (meas_package.sensor_type_ == MeasurementPackage::LASER && use_laser_) {
     cout  << "Caling Lidar Update "<<endl;
     UpdateLidar (meas_package);
-    previous_timestamp_ = meas_package.timestamp_;
     cout  << "Lidar Update completed "<<endl;
   }
-  else { //No sensor
-    previous_timestamp_ = meas_package.timestamp_;
-  }
+
   
 }
 
