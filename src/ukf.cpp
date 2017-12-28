@@ -54,6 +54,11 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
+  P_ << 1, 0, 0, 0, 0,
+       	0, 1, 0, 0, 0,
+       	0, 0, 1, 0, 0,
+       	0, 0, 0, 1, 0,
+       	0, 0, 0, 0, 1;  
   n_x_   = 5;
   n_aug_ = 7;
   lambda_ = 3 - n_aug_; 
@@ -67,6 +72,13 @@ UKF::UKF() {
  
 
   // set weights
+  double weight_0 = lambda/(lambda+n_aug);
+  weights_(0) = weight_0;
+  double weight = 0.5/(lambda+n_aug);
+  
+  for (int i = 1; i < 2*n_aug+1; i++) {  //2n+1 weights_    
+    weights_(i) = weight;
+  }
 
 
 }
@@ -95,11 +107,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       * Create the covariance matrix.
       * Remember: you'll need to convert radar from polar to cartesian coordinates.
     */
-  P_  << 1,0,0,0,0, 
-         0,1,0,0,0,
-	     0,0,1,0,0,
-	     0,0,0,1,0,
-	     0,0,0,0,1;
+ 
     
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -135,7 +143,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	//compute the time elapsed between the current and previous measurements
   float dt = 0.0f;
   dt = float((meas_package.timestamp_ - previous_timestamp_)/1000000.0); 
-
+  previous_timestamp_ = meas_package.timestamp_;
 
   /*****************************************************************************
    *  Prediction
@@ -304,7 +312,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   */
   /******************************** PREDICTING LIDAR MEASUREMENTS **********************************/   
   //create matrix for sigma points in measurement space
-  int n_z =2
+  int n_z =2;
   MatrixXd Zsig = MatrixXd(n_z, 2 * n_aug_ + 1); // nz-1 = 2 since the lidar measures only px, py
   Zsig.fill(0.0);
 
