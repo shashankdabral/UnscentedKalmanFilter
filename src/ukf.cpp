@@ -148,6 +148,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   /*****************************************************************************
    *  Prediction
    ****************************************************************************/
+        cout <<"Calling Prediction with delta_t = " <<dt <<endl;
 	Prediction(dt);
   /*****************************************************************************
    *  Update
@@ -158,18 +159,13 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
      * Update the state and covariance matrices.
    */
 	if (meas_package.sensor_type_ == MeasurementPackage::RADAR and use_radar_ == true) {		
-		//cout << "RADAR" << endl;
+		cout << "Calling RADAR Update" << endl;
 		UpdateRadar(meas_package);
 	}
 	else if(meas_package.sensor_type_ == MeasurementPackage::LASER and use_laser_ == true){
-		//cout << "LIDAR" << endl;
+		cout << "Calling Lidar Update" << endl;
 		UpdateLidar(meas_package);			// UKF based calculations
-		//UpdateLidarEKF(meas_package);		// EKF based calculations : Since lidar calc are
-											//	linear, EKF equations can be used here too.
 	}  
-	// print the output
-	//cout << "x_ = " << x_ << endl;
-	//cout << "P_ = " << P_ << endl;
 }
 
 /**
